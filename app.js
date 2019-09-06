@@ -6,6 +6,7 @@ window.addEventListener('load', () => {
   );
   let temperatureDegree = document.querySelector('.temperature-degree');
   let locationTimezone = document.querySelector('.location-timezone');
+  let temperatureName = document.querySelector('.temperature-name');
 
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(position => {
@@ -20,9 +21,15 @@ window.addEventListener('load', () => {
         .then(data => {
           const { temperature, summary, icon } = data.currently;
           //Set DOM elements from the API
-          temperatureDegree.textContent = temperature;
           temperatureDescription.textContent = summary;
-          temperatureDegree.textContent = temperature;
+          temperatureDegree.textContent = parseInt(fToC(temperature));
+          if (data.timezone === 'Europe/Dublin') {
+            temperatureDegree.textContent = parseInt(fToC(temperature));
+            temperatureName.textContent = 'Celcius';
+          } else {
+            temperatureDegree.textContent = parseInt(temperature);
+            temperatureName.textContent = 'Fahrenheit';
+          }
           locationTimezone.textContent = data.timezone;
           //Set icon
           setIcons(icon, document.querySelector('.icon'));
@@ -36,5 +43,10 @@ window.addEventListener('load', () => {
     const currentIcon = icon.replace(/-/g, '_').toUpperCase();
     skycons.play();
     return skycons.set(iconID, Skycons[currentIcon]);
+  }
+  function fToC(fahrenheit) {
+    const fTemp = fahrenheit;
+    const fToCel = ((fTemp - 32) * 5) / 9;
+    return fToCel;
   }
 });
